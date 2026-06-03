@@ -1,0 +1,10 @@
+{
+  "name": "orbitlab-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/serve.mjs",
+    "check": "node --check src/app.js && node --check tools/serve.mjs"
+  }
+}

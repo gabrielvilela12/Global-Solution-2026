@@ -36,6 +36,14 @@ public class AuthController {
         String senha = body.getOrDefault("senha", "").toString();
         try {
             Usuario u = service.autenticar(email, senha);
+
+            // --- Ponto de extensão para 2FA (futuro) ---
+            // Quando o 2FA for implementado:
+            //   if (u.isTwoFactorEnabled()) {
+            //       return ResponseEntity.ok(Map.of("requires2fa", true, "userId", u.getId()));
+            //   }
+            // e um endpoint /api/auth/2fa/verify validará o código antes de liberar o acesso.
+
             return ResponseEntity.ok(u);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", e.getMessage()));

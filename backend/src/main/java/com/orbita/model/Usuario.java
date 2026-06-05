@@ -18,6 +18,14 @@ public class Usuario {
     private String senha;
     private LocalDateTime criadoEm;
 
+    // --- Preparação para autenticação em dois fatores (2FA) ---
+    // Ainda não utilizado no fluxo; as colunas já existem para quando o 2FA for ativado.
+    @Column(name = "two_factor_enabled")
+    private boolean twoFactorEnabled = false;
+
+    @Column(name = "two_factor_secret")
+    private String twoFactorSecret;
+
     public Usuario() {}
 
     @PrePersist
@@ -30,14 +38,21 @@ public class Usuario {
     public String getTipo()          { return tipo; }
     public String getEmail()         { return email; }
 
-    // Nunca expõe a senha nas respostas JSON
+    // Nunca expõe a senha (hash) nas respostas JSON
     @JsonIgnore
     public String getSenha()         { return senha; }
 
     public LocalDateTime getCriadoEm() { return criadoEm; }
 
+    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
+
+    @JsonIgnore
+    public String getTwoFactorSecret() { return twoFactorSecret; }
+
     public void setInstituicao(String instituicao) { this.instituicao = instituicao; }
     public void setTipo(String tipo)               { this.tipo = tipo; }
     public void setEmail(String email)             { this.email = email; }
     public void setSenha(String senha)             { this.senha = senha; }
+    public void setTwoFactorEnabled(boolean v)     { this.twoFactorEnabled = v; }
+    public void setTwoFactorSecret(String s)       { this.twoFactorSecret = s; }
 }

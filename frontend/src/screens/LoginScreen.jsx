@@ -16,11 +16,14 @@ export default function LoginScreen({ onLogin }) {
   const [tipo, setTipo] = useState('')
   const [confirmar, setConfirmar] = useState('')
   const [manter, setManter] = useState(false)
+  const [aceito, setAceito] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const trocarTab = (t) => { setTab(t); setError(null) }
+
+  const emailValido = (e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)
 
   const handleEntrar = async () => {
     if (!email.trim() || !senha) { setError('Preencha e-mail e senha.'); return }
@@ -35,7 +38,10 @@ export default function LoginScreen({ onLogin }) {
 
   const handleCriar = async () => {
     if (!instituicao.trim() || !email.trim() || !senha) { setError('Preencha instituição, e-mail e senha.'); return }
+    if (!emailValido(email)) { setError('Informe um e-mail válido.'); return }
+    if (senha.length < 6) { setError('A senha deve ter ao menos 6 caracteres.'); return }
     if (senha !== confirmar) { setError('As senhas não conferem.'); return }
+    if (!aceito) { setError('É preciso aceitar os termos de uso.'); return }
     setLoading(true); setError(null)
     try {
       const user = await cadastrar({ instituicao, tipo: tipo || 'Universidade', email, senha })
@@ -125,8 +131,13 @@ export default function LoginScreen({ onLogin }) {
                     <Field label="Senha" type="password" placeholder="••••••••" value={senha} onChange={setSenha} required />
                     <Field label="Confirmar" type="password" placeholder="••••••••" value={confirmar} onChange={setConfirmar} required />
                   </div>
-                  <label className="flex items-start gap-2 text-[13px] text-muted cursor-pointer">
-                    <span className="w-4 h-4 border border-line rounded bg-panel mt-0.5 shrink-0" />
+                  <label className="flex items-start gap-2 text-[13px] text-muted cursor-pointer select-none">
+                    <input type="checkbox" checked={aceito} onChange={e => setAceito(e.target.checked)} className="sr-only" />
+                    <span className={`w-4 h-4 rounded border mt-0.5 shrink-0 flex items-center justify-center transition ${aceito ? 'bg-accent border-accent text-ink' : 'border-line bg-panel'}`}>
+                      {aceito && (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                      )}
+                    </span>
                     Aceito os termos de uso e a política de dados orbitais
                   </label>
                   {error && <p className="text-stop text-[13px]">{error}</p>}

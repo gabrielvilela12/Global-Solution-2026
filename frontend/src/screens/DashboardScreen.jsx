@@ -69,7 +69,7 @@ export default function DashboardScreen({ onNav, flash }) {
             <table className="w-full text-[13.5px]">
               <thead>
                 <tr className="bg-bg2 border-b border-line">
-                  {['Pedido', 'Satélite', 'Objetivo da missão', 'Início', 'Duração', 'Status', ''].map(h => (
+                  {['Pedido', 'Satélite', 'Objetivo da missão', 'Janela', 'Duração', 'Status', ''].map(h => (
                     <th key={h} className="text-left px-4 py-2.5 font-mono text-[11px] uppercase tracking-wider text-dim font-medium">{h}</th>
                   ))}
                 </tr>
@@ -90,7 +90,7 @@ export default function DashboardScreen({ onNav, flash }) {
                         </div>
                       </td>
                       <td className="px-4 py-3.5 text-muted max-w-[220px] truncate">{r.objetivo}</td>
-                      <td className="px-4 py-3.5 font-mono text-[12px] text-muted whitespace-nowrap">{fmtData(r.dataInicio)}</td>
+                      <td className="px-4 py-3.5 font-mono text-[12px] text-muted whitespace-nowrap">{r.dataFim ? `${fmtData(r.dataInicio)} – ${fmtData(r.dataFim)}` : fmtData(r.dataInicio)}</td>
                       <td className="px-4 py-3.5 text-muted whitespace-nowrap">{r.duracao || '—'}</td>
                       <td className="px-4 py-3.5"><StatusPill status={r.status} /></td>
                       <td className="px-4 py-3.5">

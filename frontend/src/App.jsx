@@ -34,7 +34,7 @@ export default function App() {
   if (screen === 'login')     return <LoginScreen    onLogin={handleLogin} />
   if (screen === 'home')      return <HomeScreen     onNav={nav} onOpen={handleOpen} />
   if (screen === 'details')   return <DetailScreen   sat={selSat} onNav={nav} onRequest={handleRequest} />
-  if (screen === 'checkout')  return <CheckoutScreen sat={selSat} onNav={nav} onConfirm={handleConfirm} />
-  if (screen === 'dashboard') return <DashboardScreen onNav={nav} flash={flash} />
+  if (screen === 'checkout')  return <CheckoutScreen sat={selSat} onNav={nav} onConfirm={handleConfirm} user={user} />
+  if (screen === 'dashboard') return <DashboardScreen onNav={nav} flash={flash} user={user} />
   return null
 }

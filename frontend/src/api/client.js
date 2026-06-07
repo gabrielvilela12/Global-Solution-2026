@@ -24,8 +24,9 @@ export async function criarSolicitacao(body) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error('Erro ao criar solicitação');
-  return res.json();
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.erro || 'Erro ao criar solicitação');
+  return data;
 }
 
 export async function login(email, senha) {

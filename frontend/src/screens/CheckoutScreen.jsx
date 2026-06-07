@@ -5,7 +5,6 @@ import { DateRangeField } from '../components/Calendar.jsx'
 
 export default function CheckoutScreen({ sat, onNav, onConfirm }) {
   const [periodo, setPeriodo] = useState({ inicio: null, fim: null })
-  const [duracao, setDuracao] = useState('')
   const [faixa, setFaixa] = useState('')
   const [prioridade, setPrioridade] = useState('')
   const [objetivo, setObjetivo] = useState('')
@@ -13,9 +12,6 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
   const [error, setError] = useState(null)
 
   if (!sat) return null
-
-  const unidade = sat.unidade?.replace('/ ', '').replace('/', '') || 'órbita'
-  const duracaoOpts = [`1 ${unidade}`, `2 ${unidade}`, `3 ${unidade}`, `4 ${unidade}`]
 
   const handleSubmit = async () => {
     if (!periodo.inicio) { setError('Selecione a janela de uso no calendário.'); return }
@@ -28,7 +24,6 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
         objetivo,
         dataInicio: periodo.inicio,
         dataFim: periodo.fim,
-        duracao,
         faixaHoraria: faixa,
         prioridade,
       })
@@ -60,9 +55,8 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
 
             <div className="bg-panel border border-line rounded-[14px] p-[22px] mb-[18px]">
               <h3 className="font-mono text-[12px] uppercase tracking-wider text-muted mb-4 pb-3.5 border-b border-line">Período do aluguel</h3>
-              <div className="grid grid-cols-2 gap-3.5 mb-3.5">
+              <div className="mb-3.5">
                 <DateRangeField label="Janela (início – fim)" value={periodo} onChange={setPeriodo} required hint="Sujeito à confirmação da operadora" />
-                <Field label="Tempo necessário" type="select" placeholder="Selecione a duração" options={duracaoOpts} value={duracao} onChange={setDuracao} required hint={`Cobrado por ${unidade}`} />
               </div>
               <div className="grid grid-cols-2 gap-3.5">
                 <Field label="Faixa horária (UTC)" type="select" placeholder="Qualquer passagem" options={['Qualquer passagem', '00–06h', '06–12h', '12–18h', '18–24h']} value={faixa} onChange={setFaixa} />

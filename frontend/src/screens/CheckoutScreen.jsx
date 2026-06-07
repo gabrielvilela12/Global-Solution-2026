@@ -3,7 +3,7 @@ import { criarSolicitacao } from '../api/client.js'
 import { TopBar, Kicker, SectionTitle, Crumbs, Ph, Field, Btn, fmtData } from '../components/ui.jsx'
 import { DateRangeField } from '../components/Calendar.jsx'
 
-export default function CheckoutScreen({ sat, onNav, onConfirm }) {
+export default function CheckoutScreen({ sat, onNav, onConfirm, user }) {
   const [periodo, setPeriodo] = useState({ inicio: null, fim: null })
   const [faixa, setFaixa] = useState('')
   const [prioridade, setPrioridade] = useState('')
@@ -21,6 +21,7 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
     try {
       const result = await criarSolicitacao({
         sateliteId: sat.id,
+        usuarioId: user?.id,
         objetivo,
         dataInicio: periodo.inicio,
         dataFim: periodo.fim,

@@ -5,18 +5,31 @@ import DetailScreen   from './screens/DetailScreen.jsx'
 import CheckoutScreen from './screens/CheckoutScreen.jsx'
 import DashboardScreen from './screens/DashboardScreen.jsx'
 
+const STORAGE_KEY = 'orbita_user'
+
+function lerUsuarioSalvo() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') } catch { return null }
+}
+
 export default function App() {
-  const [screen, setScreen] = useState('login')
+  const [user, setUser] = useState(lerUsuarioSalvo)
+  const [screen, setScreen] = useState(user ? 'home' : 'login')
   const [selSat, setSelSat] = useState(null)
   const [flash,  setFlash]  = useState(null)
 
   const go = (s) => { setScreen(s); window.scrollTo({ top: 0 }) }
 
-  const handleLogin   = () => go('home')
+  const handleLogin = (u) => {
+    if (u) { setUser(u); localStorage.setItem(STORAGE_KEY, JSON.stringify(u)) }
+    go('home')
+  }
   const handleOpen    = (sat) => { setSelSat(sat); go('details') }
   const handleRequest = (sat) => { setSelSat(sat); go('checkout') }
   const handleConfirm = (sol) => { setFlash(sol); go('dashboard') }
-  const nav = (s) => { if (s === 'login') setFlash(null); go(s) }
+  const nav = (s) => {
+    if (s === 'login') { setFlash(null); setUser(null); localStorage.removeItem(STORAGE_KEY) }
+    go(s)
+  }
 
   if (screen === 'login')     return <LoginScreen    onLogin={handleLogin} />
   if (screen === 'home')      return <HomeScreen     onNav={nav} onOpen={handleOpen} />

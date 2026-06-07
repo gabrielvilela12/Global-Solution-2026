@@ -12,8 +12,9 @@ export async function getSatelite(id) {
   return res.json();
 }
 
-export async function getSolicitacoes() {
-  const res = await fetch(`${BASE}/solicitacoes`);
+export async function getSolicitacoes(usuarioId) {
+  const url = usuarioId ? `${BASE}/solicitacoes?usuarioId=${usuarioId}` : `${BASE}/solicitacoes`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error('Erro ao buscar solicitações');
   return res.json();
 }

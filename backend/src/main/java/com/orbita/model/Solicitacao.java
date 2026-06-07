@@ -18,7 +18,13 @@ public class Solicitacao {
 
     private String objetivo;
     private LocalDate dataInicio;
+    private LocalDate dataFim;
     private String duracao;
+
+    @Column(name = "faixa_horaria")
+    private String faixaHoraria;
+
+    private String prioridade;
     private String status;
     private LocalDateTime criadoEm;
 
@@ -34,13 +40,19 @@ public class Solicitacao {
     public Satelite getSatelite()      { return satelite; }
     public String getObjetivo()        { return objetivo; }
     public LocalDate getDataInicio()   { return dataInicio; }
+    public LocalDate getDataFim()      { return dataFim; }
     public String getDuracao()         { return duracao; }
+    public String getFaixaHoraria()    { return faixaHoraria; }
+    public String getPrioridade()      { return prioridade; }
     public String getStatus()          { return status; }
     public LocalDateTime getCriadoEm() { return criadoEm; }
 
     public void setSatelite(Satelite satelite) { this.satelite = satelite; }
     public void setObjetivo(String objetivo)   { this.objetivo = objetivo; }
     public void setDataInicio(LocalDate d)     { this.dataInicio = d; }
+    public void setDataFim(LocalDate d)        { this.dataFim = d; }
     public void setDuracao(String duracao)     { this.duracao = duracao; }
+    public void setFaixaHoraria(String f)      { this.faixaHoraria = f; }
+    public void setPrioridade(String p)        { this.prioridade = p; }
     public void setStatus(String status)       { this.status = status; }
 }

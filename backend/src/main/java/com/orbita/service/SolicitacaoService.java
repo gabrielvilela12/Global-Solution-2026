@@ -27,20 +27,37 @@ public class SolicitacaoService {
     }
 
     public Solicitacao criar(Map<String, Object> body) {
-        Long sateliteId = Long.valueOf(body.get("sateliteId").toString());
+        Long sateliteId = Long.valueOf(str(body.get("sateliteId")));
         Satelite satelite = sateliteRepository.findById(sateliteId)
-                .orElseThrow(() -> new RuntimeException("Satélite não encontrado: " + sateliteId));
+                .orElseThrow(() -> new IllegalArgumentException("Satélite não encontrado: " + sateliteId));
+
+        String objetivo = str(body.get("objetivo"));
+        if (objetivo.isBlank()) throw new IllegalArgumentException("Descreva o objetivo da coleta.");
+
+        LocalDate inicio = parseData(body.get("dataInicio"));
+        if (inicio == null) throw new IllegalArgumentException("Selecione a janela de uso.");
+
+        LocalDate fim = parseData(body.get("dataFim"));
+        if (fim != null && fim.isBefore(inicio))
+            throw new IllegalArgumentException("A data final deve ser igual ou posterior à inicial.");
 
         Solicitacao s = new Solicitacao();
         s.setSatelite(satelite);
-        s.setObjetivo(body.get("objetivo").toString());
-        s.setDuracao(body.getOrDefault("duracao", "").toString());
-
-        Object dataObj = body.get("dataInicio");
-        if (dataObj != null && !dataObj.toString().isBlank()) {
-            s.setDataInicio(LocalDate.parse(dataObj.toString()));
-        }
-
+        s.setObjetivo(objetivo);
+        s.setDataInicio(inicio);
+        s.setDataFim(fim);
+        s.setDuracao(str(body.get("duracao")));
+        s.setFaixaHoraria(str(body.get("faixaHoraria")));
+        s.setPrioridade(str(body.get("prioridade")));
         return solicitacaoRepository.save(s);
+    }
+
+    private static LocalDate parseData(Object o) {
+        String v = str(o);
+        return v.isBlank() ? null : LocalDate.parse(v);
+    }
+
+    private static String str(Object o) {
+        return o == null ? "" : o.toString().trim();
     }
 }

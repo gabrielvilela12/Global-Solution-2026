@@ -3,6 +3,7 @@ package com.orbita.controller;
 import com.orbita.model.Solicitacao;
 import com.orbita.service.SolicitacaoService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +25,12 @@ public class SolicitacaoController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Solicitacao criar(@RequestBody Map<String, Object> body) {
-        return service.criar(body);
+    public ResponseEntity<?> criar(@RequestBody Map<String, Object> body) {
+        try {
+            Solicitacao s = service.criar(body);
+            return ResponseEntity.status(HttpStatus.CREATED).body(s);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
     }
 }

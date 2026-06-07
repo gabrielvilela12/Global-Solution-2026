@@ -20,7 +20,8 @@ public class SolicitacaoController {
     }
 
     @GetMapping
-    public List<Solicitacao> listar() {
+    public List<Solicitacao> listar(@RequestParam(required = false) Long usuarioId) {
+        if (usuarioId != null) return service.listarPorUsuario(usuarioId);
         return service.listarTodas();
     }
 

@@ -1,5 +1,6 @@
 package com.orbita.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,11 @@ public class Solicitacao {
     @ManyToOne
     @JoinColumn(name = "satelite_id")
     private Satelite satelite;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    @JsonIgnore
+    private Usuario usuario;
 
     private String objetivo;
     private LocalDate dataInicio;
@@ -38,6 +44,7 @@ public class Solicitacao {
 
     public Long getId()                { return id; }
     public Satelite getSatelite()      { return satelite; }
+    public Usuario getUsuario()        { return usuario; }
     public String getObjetivo()        { return objetivo; }
     public LocalDate getDataInicio()   { return dataInicio; }
     public LocalDate getDataFim()      { return dataFim; }
@@ -48,6 +55,7 @@ public class Solicitacao {
     public LocalDateTime getCriadoEm() { return criadoEm; }
 
     public void setSatelite(Satelite satelite) { this.satelite = satelite; }
+    public void setUsuario(Usuario usuario)    { this.usuario = usuario; }
     public void setObjetivo(String objetivo)   { this.objetivo = objetivo; }
     public void setDataInicio(LocalDate d)     { this.dataInicio = d; }
     public void setDataFim(LocalDate d)        { this.dataFim = d; }

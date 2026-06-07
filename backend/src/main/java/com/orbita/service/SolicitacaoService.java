@@ -2,8 +2,10 @@ package com.orbita.service;
 
 import com.orbita.model.Satelite;
 import com.orbita.model.Solicitacao;
+import com.orbita.model.Usuario;
 import com.orbita.repository.SateliteRepository;
 import com.orbita.repository.SolicitacaoRepository;
+import com.orbita.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,15 +17,22 @@ public class SolicitacaoService {
 
     private final SolicitacaoRepository solicitacaoRepository;
     private final SateliteRepository sateliteRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public SolicitacaoService(SolicitacaoRepository solicitacaoRepository,
-                              SateliteRepository sateliteRepository) {
+                              SateliteRepository sateliteRepository,
+                              UsuarioRepository usuarioRepository) {
         this.solicitacaoRepository = solicitacaoRepository;
         this.sateliteRepository    = sateliteRepository;
+        this.usuarioRepository      = usuarioRepository;
     }
 
     public List<Solicitacao> listarTodas() {
         return solicitacaoRepository.findAll();
+    }
+
+    public List<Solicitacao> listarPorUsuario(Long usuarioId) {
+        return solicitacaoRepository.findByUsuarioId(usuarioId);
     }
 
     public Solicitacao criar(Map<String, Object> body) {
@@ -48,8 +57,20 @@ public class SolicitacaoService {
         Satelite satelite = sateliteRepository.findById(sateliteId)
                 .orElseThrow(() -> new IllegalArgumentException("Satélite não encontrado: " + sateliteId));
 
+        String usuarioIdStr = str(body.get("usuarioId"));
+        if (usuarioIdStr.isBlank()) throw new IllegalArgumentException("Usuário não identificado. Faça login novamente.");
+        Long usuarioId;
+        try {
+            usuarioId = Long.valueOf(usuarioIdStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Usuário inválido.");
+        }
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
         Solicitacao s = new Solicitacao();
         s.setSatelite(satelite);
+        s.setUsuario(usuario);
         s.setObjetivo(objetivo);
         s.setDataInicio(inicio);
         s.setDataFim(fim);

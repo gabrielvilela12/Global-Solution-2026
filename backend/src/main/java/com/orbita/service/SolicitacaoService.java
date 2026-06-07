@@ -27,10 +27,6 @@ public class SolicitacaoService {
     }
 
     public Solicitacao criar(Map<String, Object> body) {
-        Long sateliteId = Long.valueOf(str(body.get("sateliteId")));
-        Satelite satelite = sateliteRepository.findById(sateliteId)
-                .orElseThrow(() -> new IllegalArgumentException("Satélite não encontrado: " + sateliteId));
-
         String objetivo = str(body.get("objetivo"));
         if (objetivo.isBlank()) throw new IllegalArgumentException("Descreva o objetivo da coleta.");
 
@@ -40,6 +36,17 @@ public class SolicitacaoService {
         LocalDate fim = parseData(body.get("dataFim"));
         if (fim != null && fim.isBefore(inicio))
             throw new IllegalArgumentException("A data final deve ser igual ou posterior à inicial.");
+
+        String sateliteIdStr = str(body.get("sateliteId"));
+        if (sateliteIdStr.isBlank()) throw new IllegalArgumentException("Satélite não informado.");
+        Long sateliteId;
+        try {
+            sateliteId = Long.valueOf(sateliteIdStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Satélite inválido.");
+        }
+        Satelite satelite = sateliteRepository.findById(sateliteId)
+                .orElseThrow(() -> new IllegalArgumentException("Satélite não encontrado: " + sateliteId));
 
         Solicitacao s = new Solicitacao();
         s.setSatelite(satelite);

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { criarSolicitacao } from '../api/client.js'
-import { TopBar, Kicker, SectionTitle, Crumbs, Ph, Field, Btn } from '../components/ui.jsx'
+import { TopBar, Kicker, SectionTitle, Crumbs, Ph, Field, Btn, fmtData } from '../components/ui.jsx'
+import { DateRangeField } from '../components/Calendar.jsx'
 
 export default function CheckoutScreen({ sat, onNav, onConfirm }) {
-  const [dataInicio, setDataInicio] = useState('')
+  const [periodo, setPeriodo] = useState({ inicio: null, fim: null })
   const [duracao, setDuracao] = useState('')
   const [faixa, setFaixa] = useState('')
   const [prioridade, setPrioridade] = useState('')
@@ -17,17 +18,30 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
   const duracaoOpts = [`1 ${unidade}`, `2 ${unidade}`, `3 ${unidade}`, `4 ${unidade}`]
 
   const handleSubmit = async () => {
+    if (!periodo.inicio) { setError('Selecione a janela de uso no calendário.'); return }
     if (!objetivo.trim()) { setError('Descreva o objetivo da coleta.'); return }
     setLoading(true)
     setError(null)
     try {
-      const result = await criarSolicitacao({ sateliteId: sat.id, objetivo, dataInicio, duracao })
+      const result = await criarSolicitacao({
+        sateliteId: sat.id,
+        objetivo,
+        dataInicio: periodo.inicio,
+        dataFim: periodo.fim,
+        duracao,
+        faixaHoraria: faixa,
+        prioridade,
+      })
       onConfirm(result)
     } catch (e) {
-      setError(e.message + ' — verifique se o backend está rodando.')
+      setError(e.message)
       setLoading(false)
     }
   }
+
+  const janelaTexto = periodo.inicio
+    ? (periodo.fim ? `${fmtData(periodo.inicio)} – ${fmtData(periodo.fim)}` : fmtData(periodo.inicio))
+    : '—'
 
   return (
     <div className="min-h-screen bg-bg">
@@ -40,7 +54,6 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
         ]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-7 items-start">
-          {/* formulário */}
           <div>
             <Kicker>Etapa 1 de 1 · solicitação</Kicker>
             <SectionTitle className="mb-6">Definir janela de uso</SectionTitle>
@@ -48,7 +61,7 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
             <div className="bg-panel border border-line rounded-[14px] p-[22px] mb-[18px]">
               <h3 className="font-mono text-[12px] uppercase tracking-wider text-muted mb-4 pb-3.5 border-b border-line">Período do aluguel</h3>
               <div className="grid grid-cols-2 gap-3.5 mb-3.5">
-                <Field label="Data de início" type="date" value={dataInicio} onChange={setDataInicio} required hint="Sujeito à confirmação da janela orbital" />
+                <DateRangeField label="Janela (início – fim)" value={periodo} onChange={setPeriodo} required hint="Sujeito à confirmação da operadora" />
                 <Field label="Tempo necessário" type="select" placeholder="Selecione a duração" options={duracaoOpts} value={duracao} onChange={setDuracao} required hint={`Cobrado por ${unidade}`} />
               </div>
               <div className="grid grid-cols-2 gap-3.5">
@@ -75,7 +88,6 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
             </div>
           </div>
 
-          {/* resumo do pedido */}
           <aside className="lg:sticky lg:top-[78px]">
             <div className="bg-panel border border-line rounded-[14px] p-5">
               <div className="flex gap-3 items-center mb-4 pb-4 border-b border-line">
@@ -89,11 +101,12 @@ export default function CheckoutScreen({ sat, onNav, onConfirm }) {
                 {[
                   ['Categoria', sat.categoria],
                   ['Órbita', sat.orbita?.split(' · ')[0]],
+                  ['Janela', janelaTexto],
                   ['Preço base', `${sat.preco} ${sat.unidade}`],
                   ['Taxa de plataforma', 'US$ 120'],
                 ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between py-2 border-b border-line last:border-0 text-[13px]">
-                    <span className="text-muted">{k}</span><span className="text-text">{v}</span>
+                  <div key={k} className="flex justify-between py-2 border-b border-line last:border-0 text-[13px] gap-3">
+                    <span className="text-muted shrink-0">{k}</span><span className="text-text text-right">{v}</span>
                   </div>
                 ))}
               </div>

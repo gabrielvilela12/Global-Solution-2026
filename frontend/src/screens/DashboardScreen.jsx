@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react'
 import { getSolicitacoes } from '../api/client.js'
 import { TopBar, Kicker, SectionTitle, StatusPill, Btn, fmtData, fmtId } from '../components/ui.jsx'
 
-export default function DashboardScreen({ onNav, flash }) {
+export default function DashboardScreen({ onNav, flash, user }) {
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    getSolicitacoes()
+    getSolicitacoes(user?.id)
       .then(data => setRows([...data].sort((a, b) => b.id - a.id)))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
-  }, [flash])
+  }, [flash, user?.id])
 
   const n = (st) => rows.filter(r => r.status === st).length
   const stats = [

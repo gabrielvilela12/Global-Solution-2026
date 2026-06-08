@@ -51,3 +51,14 @@ export async function cadastrar(body) {
   if (!res.ok) throw new Error(data.erro || 'Erro ao criar conta');
   return data;
 }
+
+export async function atualizarStatusSolicitacao(id, status, usuarioId) {
+  const res = await fetch(`${BASE}/solicitacoes/${id}/status`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, usuarioId }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.erro || 'Erro ao atualizar status');
+  return data;
+}

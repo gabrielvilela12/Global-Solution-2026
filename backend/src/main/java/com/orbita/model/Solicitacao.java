@@ -1,6 +1,7 @@
 package com.orbita.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +41,13 @@ public class Solicitacao {
     public void prePersist() {
         if (status == null)   status   = "analise";
         if (criadoEm == null) criadoEm = LocalDateTime.now();
+    }
+
+    // Expõe só o nome da instituição do dono (para o painel da operadora),
+    // sem serializar o objeto Usuario inteiro.
+    @JsonProperty("instituicao")
+    public String getInstituicao() {
+        return usuario != null ? usuario.getInstituicao() : null;
     }
 
     public Long getId()                { return id; }

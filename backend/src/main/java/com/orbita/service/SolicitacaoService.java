@@ -11,9 +11,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class SolicitacaoService {
+
+    private static final Set<String> STATUS_VALIDOS =
+            Set.of("aprovado", "recusado", "agendado", "concluido");
 
     private final SolicitacaoRepository solicitacaoRepository;
     private final SateliteRepository sateliteRepository;
@@ -78,6 +82,23 @@ public class SolicitacaoService {
         s.setFaixaHoraria(str(body.get("faixaHoraria")));
         s.setPrioridade(str(body.get("prioridade")));
         return solicitacaoRepository.save(s);
+    }
+
+    public Solicitacao atualizarStatus(Long id, String novoStatus, Long usuarioId) {
+        if (usuarioId == null) throw new IllegalArgumentException("Usuário não identificado.");
+        Usuario ator = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não identificado."));
+        if (!"operadora".equals(ator.getRole()))
+            throw new SemPermissaoException("Apenas operadoras podem alterar o status.");
+
+        String s = novoStatus == null ? "" : novoStatus.trim().toLowerCase();
+        if (!STATUS_VALIDOS.contains(s))
+            throw new IllegalArgumentException("Status inválido.");
+
+        Solicitacao sol = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitação não encontrada."));
+        sol.setStatus(s);
+        return solicitacaoRepository.save(sol);
     }
 
     private static LocalDate parseData(Object o) {

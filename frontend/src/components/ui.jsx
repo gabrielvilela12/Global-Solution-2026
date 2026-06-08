@@ -2,6 +2,11 @@
 
 import { useState } from 'react'
 
+function papelUsuario() {
+  try { return JSON.parse(localStorage.getItem('orbita_user') || 'null')?.role || 'usuario' }
+  catch { return 'usuario' }
+}
+
 const EyeIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" />
@@ -75,6 +80,8 @@ export function TopBar({ active, onNav, minimal }) {
         <nav className="flex gap-1 flex-1">
           <NavItem on={() => onNav('home')} act={['home', 'details', 'checkout'].includes(active)}>Catálogo</NavItem>
           <NavItem on={() => onNav('dashboard')} act={active === 'dashboard'}>Meus Aluguéis</NavItem>
+          {papelUsuario() === 'operadora' &&
+            <NavItem on={() => onNav('operadora')} act={active === 'operadora'}>Operadora</NavItem>}
           <NavItem>Suporte</NavItem>
         </nav>
         <button type="button" className="w-9 h-9 rounded-[7px] border border-line text-muted flex items-center justify-center hover:border-accent hover:text-accent transition">◇</button>

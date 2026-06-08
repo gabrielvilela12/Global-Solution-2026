@@ -4,6 +4,7 @@ import HomeScreen     from './screens/HomeScreen.jsx'
 import DetailScreen   from './screens/DetailScreen.jsx'
 import CheckoutScreen from './screens/CheckoutScreen.jsx'
 import DashboardScreen from './screens/DashboardScreen.jsx'
+import OperadoraScreen from './screens/OperadoraScreen.jsx'
 
 const STORAGE_KEY = 'orbita_user'
 
@@ -36,5 +37,6 @@ export default function App() {
   if (screen === 'details')   return <DetailScreen   sat={selSat} onNav={nav} onRequest={handleRequest} />
   if (screen === 'checkout')  return <CheckoutScreen sat={selSat} onNav={nav} onConfirm={handleConfirm} user={user} />
   if (screen === 'dashboard') return <DashboardScreen onNav={nav} flash={flash} user={user} />
+  if (screen === 'operadora') return <OperadoraScreen onNav={nav} user={user} />
   return null
 }

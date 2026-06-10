@@ -11,10 +11,8 @@ frontend/dist/
 # OS / IDE
 .DS_Store
 Thumbs.db
-
-# Claude harness
-.claude/*.lock
-.claude/scheduled_tasks.lock
+.idea/
+.vscode/
 
 # Segredos — nunca versionar credenciais reais
 backend/src/main/resources/application.properties
